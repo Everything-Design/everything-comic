@@ -1,0 +1,1 @@
+{"root":["./src/app.tsx","./src/main.tsx","./src/types.ts","./src/components/controls.tsx","./src/engine/analyze.ts","./src/engine/autoparams.ts","./src/engine/comic.ts","./src/engine/comic.worker.ts","./src/engine/palettes.ts","./src/render/comiccanvas.ts"],"version":"5.9.3"}
