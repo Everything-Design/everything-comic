@@ -18,10 +18,10 @@ self.onmessage = (e: MessageEvent<WorkerRequest>) => {
       ;(self as DedicatedWorkerGlobalScope).postMessage(err)
       return
     }
-    const { w, h, tone, ink, timings } = computeComic(source, msg.params)
-    const res: WorkerResponse = { kind: 'result', id: msg.id, w, h, tone, ink, timings }
+    const { w, h, tone, ink, mask, cx, cy, timings } = computeComic(source, msg.params)
+    const res: WorkerResponse = { kind: 'result', id: msg.id, w, h, tone, ink, mask, cx, cy, timings }
     // Transfer the field buffers back to avoid a copy.
-    ;(self as DedicatedWorkerGlobalScope).postMessage(res, [tone.buffer, ink.buffer])
+    ;(self as DedicatedWorkerGlobalScope).postMessage(res, [tone.buffer, ink.buffer, mask.buffer])
   } catch (err) {
     const res: WorkerResponse = {
       kind: 'error',

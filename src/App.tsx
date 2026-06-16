@@ -31,8 +31,11 @@ const STRUCTURE_RANGES: Record<keyof StructureParams, [number, number]> = {
   gamma: [0.5, 2],
   lineStrength: [0, 1],
   lineWidth: [0.4, 2.5],
+  lineWeightContrast: [0, 1],
   lineDetail: [0, 1],
   wobble: [0, 1],
+  spottedBlack: [0, 1],
+  contactShadow: [0, 1],
 }
 
 const isHex = (v: unknown): v is string => typeof v === 'string' && /^#[0-9a-fA-F]{6}$/.test(v)
@@ -53,13 +56,21 @@ function sanitizeParams(obj: unknown): ComicParams | null {
 
   const st = (o.style ?? {}) as Record<string, unknown>
   const d = DEFAULT_PARAMS.style
+  const num = (v: unknown, lo: number, hi: number, fb: number) =>
+    typeof v === 'number' && Number.isFinite(v) ? Math.min(hi, Math.max(lo, v)) : fb
+  const frame = st.frame === 'none' || st.frame === 'rounded' || st.frame === 'bleed' ? st.frame : d.frame
   const style: StyleParams = {
-    light: isHex(st.light) ? st.light : d.light,
-    dark: isHex(st.dark) ? st.dark : d.dark,
+    inkHue: num(st.inkHue, 0, 360, d.inkHue),
+    paperColor: isHex(st.paperColor) ? st.paperColor : d.paperColor,
+    shadowHueShift: num(st.shadowHueShift, -40, 40, d.shadowHueShift),
+    satBump: num(st.satBump, 0, 1, d.satBump),
+    key: num(st.key, -1, 1, d.key),
     ink: isHex(st.ink) ? st.ink : d.ink,
-    grain: typeof st.grain === 'number' && Number.isFinite(st.grain) ? Math.min(1, Math.max(0, st.grain)) : d.grain,
-    brush: typeof st.brush === 'number' && Number.isFinite(st.brush) ? Math.min(1, Math.max(0, st.brush)) : d.brush,
-    frame: typeof st.frame === 'boolean' ? st.frame : d.frame,
+    grain: num(st.grain, 0, 1, d.grain),
+    brush: num(st.brush, 0, 1, d.brush),
+    bgFlatten: num(st.bgFlatten, 0, 1, d.bgFlatten),
+    vignette: num(st.vignette, 0, 1, d.vignette),
+    frame,
   }
   return { structure, style }
 }
@@ -217,7 +228,7 @@ export default function App() {
         setError(msg.message || 'The comic engine reported an error.')
         return
       }
-      fieldsRef.current = { w: msg.w, h: msg.h, tone: msg.tone, ink: msg.ink }
+      fieldsRef.current = { w: msg.w, h: msg.h, tone: msg.tone, ink: msg.ink, mask: msg.mask, cx: msg.cx, cy: msg.cy }
       console.debug(
         `[comic] smooth ${msg.timings.smooth.toFixed(1)}ms · ink ${msg.timings.ink.toFixed(1)}ms · total ${msg.timings.total.toFixed(1)}ms`,
       )
