@@ -15,7 +15,7 @@ import {
   WorkerResponse,
 } from './types'
 
-const FIELD_LONG = 1000 // working resolution for the compute fields
+const FIELD_LONG = 1280 // working resolution for the compute fields (finer lines)
 const EXPORT_LONG = 2200
 const COPY_LONG = 1600
 const MAX_FILE_BYTES = 40 * 1024 * 1024
